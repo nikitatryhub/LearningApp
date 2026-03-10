@@ -7,7 +7,7 @@ on:
         branches: [main]
 
 jobs:
-    install:
+    setup:
         runs-on: ubuntu-latest
 
         steps:
@@ -29,3 +29,34 @@ jobs:
 
             - name: Lint code
               run: bun run lint
+
+            - name: Run Typecheck
+              run: bun run typecheck
+
+    android-build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout LearningApp repository
+              uses: actions/checkout@v4
+
+            - name: Setup BUN
+              uses: oven-sh/setup-bun@v1
+              with:
+                  bun-version: latest
+
+                
+            - name: Install dependencies
+              run: bun install --frozen-lockfile
+
+            
+            - name: Setup Java
+              uses: actions/setup-java@v4
+              with:
+                distribution: temurin
+                java-version: 17
+
+            - name: Build Android
+              run: |
+                  cd android
+                  ./gradlew assembleDebug
